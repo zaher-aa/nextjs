@@ -3,7 +3,13 @@
 require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
-const { logInHandler, signUpHandler } = require('./controllers');
+const {
+  logInHandler,
+  signUpHandler,
+  getAllPostsHandler,
+  createPost,
+  checkAuth,
+} = require('./controllers');
 const dbConnection = require('./database/connections');
 
 const app = express();
@@ -26,7 +32,7 @@ const startServer = async () => {
 
 const seek = (cb) => (req, res, next) => {
   try {
-    cb(req, res);
+    cb(req, res, next);
   } catch (err) {
     next(err);
   }
@@ -35,6 +41,9 @@ const seek = (cb) => (req, res, next) => {
 // ? Routes
 app.post('/api/login', seek(logInHandler));
 app.post('/api/signup', seek(signUpHandler));
+app.get('/api/post/all', seek(getAllPostsHandler));
+app.use(checkAuth);
+app.post('/api/post/new', seek(createPost));
 
 app.use((req, res, next) => {
   res.status(404).json({ message: 'Page not found' });

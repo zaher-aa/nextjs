@@ -1,5 +1,21 @@
-const { sign } = require('jsonwebtoken');
-const { User } = require('../database/models');
+const { sign, verify } = require('jsonwebtoken');
+const { User, Post } = require('../database/models');
+
+const checkAuth = (req, res, next) => {
+  const { token } = req.cookies;
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    req.user = decoded;
+    next();
+  });
+};
 
 const logInHandler = async (req, res) => {
   const { email, password } = req.body;
@@ -46,7 +62,24 @@ const signUpHandler = async (req, res) => {
   });
 };
 
+const getAllPostsHandler = async (req, res) => {
+  const allPosts = await Post.find();
+
+  res.json({ message: 'Posts fetched successfully', data: allPosts });
+};
+
+const createPost = async (req, res) => {
+  const { user: { _id: owner }, body: { title, content } } = req;
+
+  const { _doc: newPost } = await Post.create({ title, content, owner });
+
+  res.json({ message: 'Post created successfully', data: newPost });
+};
+
 module.exports = {
   logInHandler,
   signUpHandler,
+  checkAuth,
+  getAllPostsHandler,
+  createPost,
 };
