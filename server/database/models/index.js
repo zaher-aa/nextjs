@@ -1,2 +1,7 @@
-export { default as User } from './User';
-export { default as Post } from './Post';
+const User = require('./User');
+const Post = require('./Post');
+
+module.exports = {
+  User,
+  Post,
+};
