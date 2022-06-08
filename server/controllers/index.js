@@ -76,10 +76,23 @@ const createPost = async (req, res) => {
   res.json({ message: 'Post created successfully', data: newPost });
 };
 
+const getUserPostsHandler = async (req, res) => {
+  const { _id: owner } = req.params;
+
+  try {
+    const userPosts = await Post.find({ owner });
+
+    res.json({ message: 'User posts fetched successfully', data: userPosts });
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching user posts' });
+  }
+};
+
 module.exports = {
   logInHandler,
   signUpHandler,
   checkAuth,
   getAllPostsHandler,
   createPost,
+  getUserPostsHandler,
 };

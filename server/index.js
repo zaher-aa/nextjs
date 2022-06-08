@@ -9,6 +9,7 @@ const {
   getAllPostsHandler,
   createPost,
   checkAuth,
+  getUserPostsHandler,
 } = require('./controllers');
 const dbConnection = require('./database/connections');
 
@@ -42,6 +43,7 @@ const seek = (cb) => (req, res, next) => {
 app.post('/api/login', seek(logInHandler));
 app.post('/api/signup', seek(signUpHandler));
 app.get('/api/post/all', seek(getAllPostsHandler));
+app.get('/api/post/:_id/all', seek(getUserPostsHandler));
 app.use(checkAuth);
 app.post('/api/post/new', seek(createPost));
 
