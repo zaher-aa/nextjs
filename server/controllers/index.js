@@ -68,7 +68,7 @@ const getAllPostsHandler = async (req, res) => {
   res.json({ message: 'Posts fetched successfully', data: allPosts });
 };
 
-const createPost = async (req, res) => {
+const createPostHandler = async (req, res) => {
   const { user: { _id: owner }, body: { title, content } } = req;
 
   const { _doc: newPost } = await Post.create({ title, content, owner });
@@ -88,11 +88,39 @@ const getUserPostsHandler = async (req, res) => {
   }
 };
 
+const deletePostHandler = async (req, res) => {
+  const { params: { _id: postId }, user: { _id: owner } } = req;
+
+  const deletedPost = await Post.findOneAndDelete({ _id: postId, owner });
+
+  if (!deletedPost) return res.status(404).json({ message: 'Post not found' });
+
+  res.json({ message: 'Post deleted successfully', data: deletedPost });
+};
+
+const editPostHandler = async (req, res) => {
+  const { params: { _id: postId }, user: { _id: owner }, body: { title, content } } = req;
+
+  const { modifiedCount: didUpdate } = await Post.updateOne(
+    { _id: postId, owner },
+    {
+      $set:
+      { title, content },
+    },
+  );
+
+  if (!didUpdate) return res.status(404).json({ message: 'Post not found' });
+
+  res.json({ message: 'Post updated successfully', data: { title, content } });
+};
+
 module.exports = {
   logInHandler,
   signUpHandler,
   checkAuth,
   getAllPostsHandler,
-  createPost,
   getUserPostsHandler,
+  createPostHandler,
+  deletePostHandler,
+  editPostHandler,
 };

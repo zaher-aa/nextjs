@@ -7,9 +7,11 @@ const {
   logInHandler,
   signUpHandler,
   getAllPostsHandler,
-  createPost,
+  createPostHandler,
   checkAuth,
   getUserPostsHandler,
+  deletePostHandler,
+  editPostHandler,
 } = require('./controllers');
 const dbConnection = require('./database/connections');
 
@@ -45,7 +47,9 @@ app.post('/api/signup', seek(signUpHandler));
 app.get('/api/post/all', seek(getAllPostsHandler));
 app.get('/api/post/:_id/all', seek(getUserPostsHandler));
 app.use(checkAuth);
-app.post('/api/post/new', seek(createPost));
+app.post('/api/post/new', seek(createPostHandler));
+app.patch('/api/post/:_id/edit', seek(editPostHandler));
+app.delete('/api/post/:_id/delete', seek(deletePostHandler));
 
 app.use((req, res, next) => {
   res.status(404).json({ message: 'Page not found' });
