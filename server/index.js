@@ -1,8 +1,10 @@
 /* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
 require('dotenv').config();
+const { join } = require('path');
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const dbConnection = require('./database/connections');
 const {
   logInHandler,
   signUpHandler,
@@ -13,7 +15,8 @@ const {
   deletePostHandler,
   editPostHandler,
 } = require('./controllers');
-const dbConnection = require('./database/connections');
+
+const { env: { DB_URL, NODE_ENV } } = process;
 
 const app = express();
 app.disable('x-powered-by');
@@ -24,7 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const startServer = async () => {
   try {
-    await dbConnection(process.env.DB_URL);
+    await dbConnection(DB_URL);
     app.listen(app.get('port'), () => {
       console.log(`Listening on port ${app.get('port')}`);
     });
@@ -40,6 +43,17 @@ const seek = (cb) => (req, res, next) => {
     next(err);
   }
 };
+
+if (NODE_ENV === 'development') {
+  app.get('/', (req, res) => res.json({ message: 'Server is running' }));
+}
+
+if (NODE_ENV === 'production') {
+  app.use(express.static(join(__dirname, '..', 'client', 'build')));
+  app.get('*', (req, res) => {
+    res.sendFile(join(__dirname, '..', 'client', 'build', 'index.html'));
+  });
+}
 
 // ? Routes
 app.post('/api/login', seek(logInHandler));
