@@ -114,6 +114,16 @@ const editPostHandler = async (req, res) => {
   res.json({ message: 'Post updated successfully', data: { title, content } });
 };
 
+const getPostInfoHandler = async (req, res) => {
+  const { params: { _id: postId } } = req;
+
+  const { _doc: post } = await Post.findOne({ _id: postId });
+
+  if (!post) return res.status(404).json({ message: 'Post not found' });
+
+  res.json({ message: 'Post info fetched successfully', data: post });
+};
+
 module.exports = {
   logInHandler,
   signUpHandler,
@@ -123,4 +133,5 @@ module.exports = {
   createPostHandler,
   deletePostHandler,
   editPostHandler,
+  getPostInfoHandler,
 };

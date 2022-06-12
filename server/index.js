@@ -14,6 +14,7 @@ const {
   getUserPostsHandler,
   deletePostHandler,
   editPostHandler,
+  getPostInfoHandler,
 } = require('./controllers');
 
 const { env: { DB_URL, NODE_ENV } } = process;
@@ -59,6 +60,7 @@ if (NODE_ENV === 'production') {
 app.post('/api/login', seek(logInHandler));
 app.post('/api/signup', seek(signUpHandler));
 app.get('/api/post/all', seek(getAllPostsHandler));
+app.get('/api/post/:_id', seek(getPostInfoHandler));
 app.get('/api/post/:_id/all', seek(getUserPostsHandler));
 app.use(checkAuth);
 app.post('/api/post/new', seek(createPostHandler));
