@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import axios from '../utils/axios';
 
 function Home({ posts }) {
@@ -8,6 +9,10 @@ function Home({ posts }) {
 
   return (
     <>
+      <Head>
+        <title>Home page</title>
+        <meta name="description" content="this is the home page" />
+      </Head>
       {
       posts.map(({ _id, title, content }) => (
         <article key={_id}>

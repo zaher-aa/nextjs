@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import axios from '../../utils/axios';
 
 function Post({ post }) {
@@ -6,11 +7,17 @@ function Post({ post }) {
   const { back } = useRouter();
 
   return (
-    <article>
-      <h1>{title}</h1>
-      <p>{content}</p>
-      <button type="button" onClick={() => back()}>Back</button>
-    </article>
+    <>
+      <Head>
+        <title>{title}</title>
+        <meta name="description" content={content} />
+      </Head>
+      <article>
+        <h1>{title}</h1>
+        <p>{content}</p>
+        <button type="button" onClick={() => back()}>Back</button>
+      </article>
+    </>
   );
 }
 
